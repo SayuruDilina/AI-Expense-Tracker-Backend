@@ -7,7 +7,7 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 const ocrRoutes = require('./routes/ocrRoutes');
-
+const sequelize = require('./config/db');
 
 
 
@@ -192,6 +192,25 @@ app.get('/', (req, res) => {
 // }
 
 const PORT = 3000;
-app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
-});
+
+const startServer = async () => {
+  try {
+    
+    await sequelize.authenticate();
+    console.log('✅ Database connected successfully.');
+
+    app.listen(PORT, () => {
+      console.log(`🚀 Server running on port ${PORT}`);
+    });
+
+  } catch (error) {
+    console.error('❌ Unable to connect to the database:', error);
+   
+    process.exit(1);
+  }
+};
+
+startServer();
+// app.listen(PORT, () => {
+//     console.log(`Server is running on http://localhost:${PORT}`);
+// });
